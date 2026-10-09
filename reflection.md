@@ -4,9 +4,12 @@ Answer each question in 3 to 5 sentences. Be specific and honest about what actu
 
 ## 1. What was broken when you started?
 
-- What did the game look like the first time you ran it?
-- List at least two concrete bugs you noticed at the start  
-  (for example: "the hints were backwards").
+The game looked normal at first glance — a number-guessing game with a difficulty setting, a hint
+toggle, and a "Developer Debug Info" panel showing the secret number, attempts, and score. But once I
+started actually playing and comparing the debug info to what the game told me, several things didn't
+match up. The hints told me to guess in the wrong direction, the "New Game" button left the game in a
+broken, unplayable state instead of cleanly restarting, and the score dropped into negative numbers with
+no apparent floor.
 
 **Bug Reproduction Log**
 
@@ -14,9 +17,9 @@ Document at least 3 bugs you found. Add rows as needed.
 
 | Input | Expected Behavior | Actual Behavior | Console Output / Error |
 |-------|-------------------|-----------------|------------------------|
-| | | | |
-| | | | |
-| | | | |
+| Guessed 34 (secret was 33, so my guess was higher than the secret) | Hint says "Go LOWER!" | Hint says "Go HIGHER!" | None — no error shown in browser or terminal |
+| Clicked "New Game" mid-round | New secret, empty history, attempts reset, guess input usable again | Secret changed, but history persisted from the old round and the guess input became unusable | None — no error shown in browser or terminal |
+| 4 wrong guesses in a row on Easy difficulty, no win | Score stays at or floors at 0 after repeated wrong guesses | Score dropped to -20 with no floor | None — no error shown in browser or terminal |
 
 ---
 
