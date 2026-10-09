@@ -25,28 +25,50 @@ It wrote the code, ran away, and now the game is unplayable.
 
 ## 📝 Document Your Experience
 
-- [ ] Describe the game's purpose.
-- [ ] Detail which bugs you found.
-- [ ] Explain what fixes you applied.
+**Purpose:** It's a number guessing game in Streamlit. You pick a difficulty, which sets the range
+and how many guesses you get, then try to land on the secret number before you run out of attempts.
+
+**Bugs I found:**
+1. Hints were backwards. If you guessed too high it told you to go higher, and too low told you to
+   go lower. Happened in both the normal comparison and the fallback branch that kicks in when the
+   secret gets converted to a string.
+2. You could guess numbers way outside the range, like 0 or 101 on a 1-100 game, and it would just
+   accept them like a normal guess.
+3. "New Game" doesn't fully reset. The secret changes but the history and guess box get stuck.
+   Didn't fix this one, just logged it.
+4. Score can go negative with no floor. Also didn't fix, just logged it.
+
+**Fixes I made:**
+1. Fixed the hint text so "Too High" actually says go lower and "Too Low" says go higher, in both
+   branches. Moved `check_guess` into `logic_utils.py` and added a test for it.
+2. Added range checking to `parse_guess` so out-of-range guesses get rejected with an error instead
+   of being scored. Also fixed the UI message that said "between 1 and 100" no matter what
+   difficulty you picked. While testing this I noticed a rejected guess still used up an attempt,
+   so I fixed that too. Attempts only go down on a valid guess now.
 
 ## 📸 Demo Walkthrough
 
-Describe your fixed game in numbered steps so a reader can follow along without watching a video:
-
-1. <!-- Describe this step -->
-2. <!-- Describe this step -->
-3. <!-- Describe this step -->
-4. <!-- Describe this step -->
-5. <!-- Add more steps as needed -->
-
-**Screenshot** *(optional)*: <!-- Insert a screenshot of your fixed, winning game here -->
+1. Picked Normal difficulty (range 1 to 100, 8 attempts).
+2. Guessed 50, got "Too Low, Go HIGHER!"
+3. Guessed 75, still "Too Low, Go HIGHER!"
+4. Guessed 90, now "Too High, Go LOWER!"
+5. Guessed 80, still "Too High, Go LOWER!"
+6. Guessed 77, back to "Too Low, Go HIGHER!"
+7. Guessed 78, got "🎉 Correct!" and won with a final score of 5.
 
 ## 🧪 Test Results
 
 ```
-# Paste your pytest output here, e.g.:
-# pytest tests/
-# ========================= X passed in 0.XXs =========================
+$ pytest tests/
+============================= test session starts =============================
+platform win32 -- Python 3.14.7, pytest-9.1.1, pluggy-1.6.0
+rootdir: C:\School Work\Principles of Software\Code Path\ai110-module1show-gameglitchinvestigator-starter
+plugins: anyio-4.15.1
+collected 8 items
+
+tests\test_game_logic.py ........                                        [100%]
+
+============================== 8 passed in 0.02s ==============================
 ```
 
 ## 🚀 Stretch Features

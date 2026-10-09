@@ -26,30 +26,38 @@ Document at least 3 bugs you found. Add rows as needed.
 
 ## 2. How did you use AI as a teammate?
 
-- Which AI tools did you use on this project (for example: ChatGPT, Gemini, Copilot)?
-- Give one example of an AI suggestion that was correct (including what the AI suggested and how you verified the result).
-- Give one example of an AI suggestion you did not accept as written (including what the AI suggested, why you rejected or changed it, and how you verified your version). It does not have to be a suggestion that was wrong: over-engineered, out of scope, harder to read, or a poor fit for this codebase all count.
+I used Claude in VS Code for this whole thing. A suggestion that worked: adding a bounds check to
+`parse_guess` so you can't guess something outside the range, like 0 or 101 on a 1-100 game. I
+tested it by just typing those numbers in and watching it get rejected instead of accepted. One I
+had to push back on: the first version of that fix added the error message but didn't notice
+invalid guesses were still burning an attempt. I only found that by actually playing and trying
+bad guesses on purpose, then asked Claude to fix it so attempts only go down on a real guess.
 
 ---
 
 ## 3. Debugging and testing your fixes
 
-- How did you decide whether a bug was really fixed?
-- Describe at least one test you ran (manual or using pytest)  
-  and what it showed you about your code.
-- Did AI help you design or understand any tests? How?
+I only counted a bug as fixed once it passed pytest AND I retested it live in the app with the
+same input that broke it in the first place. Like for the hint bug, I went back and guessed 34 vs
+secret 33 again to make sure it said "LOWER" this time. One test, `test_hint_direction_matches_outcome`,
+checks the hint message actually matches the outcome instead of being backwards. Claude wrote the
+test cases, I ran `pytest -v` myself and read through the output to make sure all 8 passed.
 
 ---
 
 ## 4. What did you learn about Streamlit and state?
 
-- How would you explain Streamlit "reruns" and session state to a friend who has never used Streamlit?
+Streamlit basically reruns your whole script from top to bottom every time you click anything. So
+a normal variable would just reset every time. `st.session_state` is the workaround. It's a dict
+that sticks around between reruns, which is why things like the secret number and score live there
+instead of as regular variables.
 
 ---
 
 ## 5. Looking ahead: your developer habits
 
-- What is one habit or strategy from this project that you want to reuse in future labs or projects?
-  - This could be a testing habit, a prompting strategy, or a way you used Git.
-- What is one thing you would do differently next time you work with AI on a coding task?
-- In one or two sentences, describe how this project changed the way you think about AI generated code.
+Habit I want to keep: actually playing the game after every fix instead of just assuming the code
+looks right. That's literally the only reason I caught the attempts bug. Thing I'd do differently:
+think about side effects before calling something fixed, instead of stumbling into them after.
+This project made me trust AI-written code a lot less by default. It can look done and still be
+wrong in a way you only notice by using it.
