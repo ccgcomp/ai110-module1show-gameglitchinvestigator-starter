@@ -40,7 +40,11 @@ and how many guesses you get, then try to land on the secret number before you r
 
 **Fixes I made:**
 1. Fixed the hint text so "Too High" actually says go lower and "Too Low" says go higher, in both
-   branches. Moved `check_guess` into `logic_utils.py` and added a test for it.
+   branches. Moved `check_guess` into `logic_utils.py` and added a test for it. Turned out this fix
+   was incomplete: app.py was still converting the secret to a string on every even-numbered
+   attempt, which made the comparison run as text instead of numbers (so "9" vs "12" came out
+   backwards since "9" sorts after "1"). Removed that string conversion so the real number always
+   gets compared, and added a test for mismatched digit counts.
 2. Added range checking to `parse_guess` so out-of-range guesses get rejected with an error instead
    of being scored. Also fixed the UI message that said "between 1 and 100" no matter what
    difficulty you picked. While testing this I noticed a rejected guess still used up an attempt,
@@ -64,11 +68,11 @@ $ pytest tests/
 platform win32 -- Python 3.14.7, pytest-9.1.1, pluggy-1.6.0
 rootdir: C:\School Work\Principles of Software\Code Path\ai110-module1show-gameglitchinvestigator-starter
 plugins: anyio-4.15.1
-collected 8 items
+collected 9 items
 
-tests\test_game_logic.py ........                                        [100%]
+tests\test_game_logic.py .........                                       [100%]
 
-============================== 8 passed in 0.02s ==============================
+============================== 9 passed in 0.03s ==============================
 ```
 
 ## 🚀 Stretch Features

@@ -123,12 +123,12 @@ if submit:
         st.session_state.attempts += 1
         st.session_state.history.append(guess_int)
 
-        if st.session_state.attempts % 2 == 0:
-            secret = str(st.session_state.secret)
-        else:
-            secret = st.session_state.secret
-
-        outcome, message = check_guess(guess_int, secret)
+        # FIX: the hint fix wasn't complete. This used to convert the secret to
+        # a string on even-numbered attempts, which sent check_guess into its
+        # string-comparison fallback. That compares guesses lexicographically,
+        # so e.g. "9" vs "12" came out "Too High" even though 9 < 12. Always
+        # passing the real int secret now. Found with Claude.
+        outcome, message = check_guess(guess_int, st.session_state.secret)
 
         if show_hint:
             st.warning(message)

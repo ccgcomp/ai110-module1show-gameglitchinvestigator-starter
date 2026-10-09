@@ -49,3 +49,18 @@ def test_guess_at_range_boundaries_is_accepted():
     ok_high, value_high, _ = parse_guess("100", 1, 100)
     assert ok_low is True and value_low == 1
     assert ok_high is True and value_high == 100
+
+def test_check_guess_handles_different_digit_counts():
+    # Regression test: app.py used to convert the secret to a string on
+    # even-numbered attempts, which made check_guess compare guesses as text
+    # instead of numbers. A single-digit guess against a double-digit secret
+    # (or vice versa) would come out backwards, e.g. "9" > "12" as strings.
+    # Calling check_guess with real ints must stay correct no matter how many
+    # digits each number has.
+    outcome_low, message_low = check_guess(9, 12)
+    assert outcome_low == "Too Low"
+    assert "HIGHER" in message_low
+
+    outcome_high, message_high = check_guess(100, 7)
+    assert outcome_high == "Too High"
+    assert "LOWER" in message_high
