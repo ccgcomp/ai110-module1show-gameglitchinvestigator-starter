@@ -3,13 +3,33 @@ def get_range_for_difficulty(difficulty: str):
     raise NotImplementedError("Refactor this function from app.py into logic_utils.py")
 
 
-def parse_guess(raw: str):
+def parse_guess(raw: str, low: int, high: int):
     """
-    Parse user input into an int guess.
+    Parse user input into an int guess within [low, high].
 
     Returns: (ok: bool, guess_int: int | None, error_message: str | None)
     """
-    raise NotImplementedError("Refactor this function from app.py into logic_utils.py")
+    if raw is None:
+        return False, None, "Enter a guess."
+
+    if raw == "":
+        return False, None, "Enter a guess."
+
+    try:
+        if "." in raw:
+            value = int(float(raw))
+        else:
+            value = int(raw)
+    except Exception:
+        return False, None, "That is not a number."
+
+    # FIX: bounds were never checked, so guesses outside the displayed range
+    # (e.g. 0 or 101 on a 1-100 game) were silently accepted and scored.
+    # Refactored into logic_utils.py with Claude.
+    if value < low or value > high:
+        return False, None, f"Enter a number between {low} and {high}."
+
+    return True, value, None
 
 
 def check_guess(guess, secret):
@@ -18,7 +38,23 @@ def check_guess(guess, secret):
 
     outcome examples: "Win", "Too High", "Too Low"
     """
-    raise NotImplementedError("Refactor this function from app.py into logic_utils.py")
+    if guess == secret:
+        return "Win", "🎉 Correct!"
+
+    try:
+        if guess > secret:
+            # FIX: hint text was swapped (said "Go HIGHER!" when the guess was
+            # already too high). Refactored into logic_utils.py with Claude.
+            return "Too High", "📉 Go LOWER!"
+        else:
+            return "Too Low", "📈 Go HIGHER!"
+    except TypeError:
+        g = str(guess)
+        if g == secret:
+            return "Win", "🎉 Correct!"
+        if g > secret:
+            return "Too High", "📉 Go LOWER!"
+        return "Too Low", "📈 Go HIGHER!"
 
 
 def update_score(current_score: int, outcome: str, attempt_number: int):
